@@ -529,8 +529,6 @@ h1 {
   stroke: var(--line-strong);
   stroke-width: 5;
   opacity: 1;
-  animation: lineFlow 7s linear infinite;
-  animation-duration: 7s;
   filter: drop-shadow(0 0 7px rgba(106, 219, 207, 0.26));
 }
 
@@ -553,24 +551,7 @@ h1 {
   stroke: rgba(255, 113, 100, 0.95);
   stroke-width: 4.4;
   opacity: 1;
-  animation-duration: 8s;
   filter: drop-shadow(0 0 9px rgba(255, 113, 100, 0.3));
-}
-
-@keyframes lineFlow {
-  from {
-    stroke-dashoffset: 0;
-  }
-
-  to {
-    stroke-dashoffset: -168;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .link {
-    animation: none;
-  }
 }
 
 .person-node {

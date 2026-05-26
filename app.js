@@ -105,6 +105,7 @@ const familyLineById = {
   "zayan-bhatti": "Bhatti family",
 
   "nauman-qureshi": "Qureshi family",
+  "mohammad-irfan-qureshi": "Qureshi family",
   "azaan": "Qureshi family",
   "inaya": "Qureshi family",
   "hannan": "Qureshi family",
@@ -220,6 +221,7 @@ const peopleList = [
   { id: "fakhara-parveen", name: "Fakhara Parveen", branch: "zakiya", generation: 3, layout: xy(2, 2810) },
   { id: "ghazala-parveen", name: "Ghazala Parveen", branch: "zakiya", generation: 3, layout: xy(2, 2895) },
   { id: "raheela-tabassum", name: "Raheela Tabassum", branch: "zakiya", generation: 3, layout: xy(2, 2980) },
+  { id: "mohammad-irfan-qureshi", name: "Mohammad Irfan Qureshi", branch: "partner", generation: 3, layout: partnerXy(2, 2980) },
   { id: "m-tariq", name: "M. Tariq", branch: "zakiya", generation: 3, layout: xy(2, 3065) },
   { id: "sami-ul-haq", name: "Sami-ul-Haq", branch: "zakiya", generation: 3, layout: xy(2, 3150) },
 
@@ -366,6 +368,7 @@ const unions = [
   { id: "farjad-saima", partners: ["farjad-amjad-khan", "saima-farjad"], children: ["mohammad-essa-farjad-khan", "mohammad-zakariyya-farjad-khan"] },
   { id: "hafsa-abdul-mueez", partners: ["hafsa-vanees", "abdul-mueez"], children: [] },
   { id: "arshia-faisal", partners: ["arshia-amjad", "faisal-bhatti"], children: ["imaan-bhatti", "sameen-bhatti", "aiza-bhatti", "zayan-bhatti"] },
+  { id: "raheela-irfan", partners: ["raheela-tabassum", "mohammad-irfan-qureshi"], children: ["nauman-qureshi"], cross: true },
   { id: "samiha-nauman", partners: ["samiha-amjad", "nauman-qureshi"], children: ["azaan", "inaya", "hannan"] },
   {
     id: "tehsin-khalid",
