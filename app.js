@@ -831,10 +831,10 @@ function nearestAnyAnchor(id) {
 }
 
 function relationToFocus(id) {
-  if (id === FOCUS_ID) return "Focus person";
-  if (getSpouses(FOCUS_ID).some((item) => item.id === id)) return "Jazim's spouse";
-  if (getParents(FOCUS_ID).includes(id)) return "Jazim's parent";
-  if (getSiblings(FOCUS_ID).includes(id)) return "Jazim's sibling";
+  if (id === FOCUS_ID) return "Selected person";
+  if (getSpouses(FOCUS_ID).some((item) => item.id === id)) return "Spouse in the main line";
+  if (getParents(FOCUS_ID).includes(id)) return "Parent in the main line";
+  if (getSiblings(FOCUS_ID).includes(id)) return "Sibling in the main line";
   if (getAncestors(FOCUS_ID).includes(id)) return "Direct ancestor";
   if (crossMarriageSet.has(id)) return "Cross-branch connection";
   return branchLabels[people.get(id)?.branch] || "Family record";
@@ -934,18 +934,18 @@ function drawWater() {
   waterFrame += 0.006;
 
   const base = waterContext.createLinearGradient(0, 0, width, height);
-  base.addColorStop(0, "rgba(244, 250, 250, 0.92)");
-  base.addColorStop(0.45, "rgba(229, 242, 240, 0.72)");
-  base.addColorStop(1, "rgba(247, 244, 238, 0.86)");
+  base.addColorStop(0, "rgba(249, 252, 251, 0.94)");
+  base.addColorStop(0.45, "rgba(234, 244, 240, 0.74)");
+  base.addColorStop(1, "rgba(248, 244, 238, 0.88)");
   waterContext.fillStyle = base;
   waterContext.fillRect(0, 0, width, height);
 
   const bands = [
-    { y: 0.15, amp: 28, alpha: 0.28, color: "255,255,255", speed: 0.7 },
-    { y: 0.32, amp: 42, alpha: 0.24, color: "190,222,219", speed: 0.9 },
-    { y: 0.5, amp: 36, alpha: 0.22, color: "255,255,255", speed: 1.1 },
-    { y: 0.68, amp: 54, alpha: 0.2, color: "176,209,211", speed: 0.6 },
-    { y: 0.82, amp: 30, alpha: 0.26, color: "255,255,255", speed: 1.25 },
+    { y: 0.15, amp: 28, alpha: 0.3, color: "255,255,255", speed: 0.7 },
+    { y: 0.32, amp: 42, alpha: 0.22, color: "197,224,216", speed: 0.9 },
+    { y: 0.5, amp: 36, alpha: 0.24, color: "255,255,255", speed: 1.1 },
+    { y: 0.68, amp: 54, alpha: 0.17, color: "218,184,165", speed: 0.6 },
+    { y: 0.82, amp: 30, alpha: 0.26, color: "245,248,242", speed: 1.25 },
   ];
 
   for (const band of bands) {

@@ -13,8 +13,8 @@
       <aside class="sidebar" aria-label="Family tree controls">
         <div class="brand">
           <p class="eyebrow">Khan Family</p>
-          <h1>Family River</h1>
-          <p class="focus-copy">Centered on Jazim Hammad Khan</p>
+          <h1>Khan Family Tree</h1>
+          <p class="focus-copy">Names, branches, and connections</p>
         </div>
 
         <label class="search-field">
@@ -28,8 +28,8 @@
           <span>View</span>
           <select id="branchFilter">
             <option value="all">Full family</option>
-            <option value="direct">Jazim focus</option>
-            <option value="connected">Cross-branch marriages</option>
+            <option value="direct">Lineage view</option>
+            <option value="connected">Connected marriages</option>
             <option value="sharif">Mohammad Sharif Khan branch</option>
             <option value="razia">Razia Sultana branch</option>
             <option value="basheer">Mohammad Basheer Khan branch</option>
@@ -39,9 +39,9 @@
         </label>
 
         <div class="quick-row" aria-label="Tree shortcuts">
-          <button id="focusMeButton" type="button" title="Center on Jazim">Me</button>
+          <button id="focusMeButton" type="button" title="Center the main line">Main</button>
           <button id="fitButton" type="button" title="Fit full tree">All</button>
-          <button id="directButton" type="button" title="Show direct focus">Line</button>
+          <button id="directButton" type="button" title="Show lineage view">Line</button>
         </div>
 
         <section class="stats" aria-label="Family tree stats">
@@ -60,7 +60,7 @@
         </section>
 
         <section class="lineage-card" aria-label="Direct lineage">
-          <h2>Jazim Line</h2>
+          <h2>Main Line</h2>
           <div id="lineageList" class="lineage-list"></div>
         </section>
       </aside>
@@ -72,7 +72,7 @@
             <button id="zoomReset" type="button" title="Reset zoom">1:1</button>
             <button id="zoomIn" type="button" title="Zoom in">+</button>
           </div>
-          <div class="selected-pill" id="selectedPill">Jazim Hammad Khan</div>
+          <div class="selected-pill" id="selectedPill">Khan Family Tree</div>
         </div>
 
         <div id="viewport" class="viewport">
