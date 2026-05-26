@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Khan Family Tree</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="waterCanvas" aria-hidden="true"></canvas>
+
+    <main class="shell">
+      <aside class="sidebar" aria-label="Family tree controls">
+        <div class="brand">
+          <p class="eyebrow">Khan Family</p>
+          <h1>Family River</h1>
+          <p class="focus-copy">Centered on Jazim Hammad Khan</p>
+        </div>
+
+        <label class="search-field">
+          <span>Search</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Name, spouse, branch" />
+        </label>
+
+        <div id="searchResults" class="search-results" aria-live="polite"></div>
+
+        <label class="select-field">
+          <span>View</span>
+          <select id="branchFilter">
+            <option value="all">Full family</option>
+            <option value="direct">Jazim focus</option>
+            <option value="connected">Cross-branch marriages</option>
+            <option value="sharif">Mohammad Sharif Khan branch</option>
+            <option value="razia">Razia Sultana branch</option>
+            <option value="basheer">Mohammad Basheer Khan branch</option>
+            <option value="zakiya">Zakiya Sultana branch</option>
+            <option value="naseer">Naseer Khan branch</option>
+          </select>
+        </label>
+
+        <div class="quick-row" aria-label="Tree shortcuts">
+          <button id="focusMeButton" type="button" title="Center on Jazim">Me</button>
+          <button id="fitButton" type="button" title="Fit full tree">All</button>
+          <button id="directButton" type="button" title="Show direct focus">Line</button>
+        </div>
+
+        <section class="stats" aria-label="Family tree stats">
+          <div>
+            <strong id="personCount">0</strong>
+            <span>People</span>
+          </div>
+          <div>
+            <strong id="unionCount">0</strong>
+            <span>Marriages</span>
+          </div>
+          <div>
+            <strong id="generationCount">0</strong>
+            <span>Generations</span>
+          </div>
+        </section>
+
+        <section class="lineage-card" aria-label="Direct lineage">
+          <h2>Jazim Line</h2>
+          <div id="lineageList" class="lineage-list"></div>
+        </section>
+      </aside>
+
+      <section class="tree-panel" aria-label="Interactive family tree">
+        <div class="tree-toolbar">
+          <div class="toolbar-group" aria-label="Zoom controls">
+            <button id="zoomOut" type="button" title="Zoom out">-</button>
+            <button id="zoomReset" type="button" title="Reset zoom">1:1</button>
+            <button id="zoomIn" type="button" title="Zoom in">+</button>
+          </div>
+          <div class="selected-pill" id="selectedPill">Jazim Hammad Khan</div>
+        </div>
+
+        <div id="viewport" class="viewport">
+          <div id="world" class="world">
+            <svg id="links" class="links" aria-hidden="true"></svg>
+            <div id="nodes" class="nodes"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside id="detailPanel" class="detail-panel" aria-label="Person details"></aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
