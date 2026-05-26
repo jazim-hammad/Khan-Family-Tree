@@ -9,12 +9,18 @@
   <body>
     <canvas id="waterCanvas" aria-hidden="true"></canvas>
 
+    <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu" title="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
     <main class="shell">
-      <aside class="sidebar" aria-label="Family tree controls">
+      <aside id="menuPanel" class="menu-panel" aria-label="Family tree controls">
         <div class="brand">
           <p class="eyebrow">Khan Family</p>
           <h1>Khan Family Tree</h1>
-          <p class="focus-copy">Names, branches, and connections</p>
+          <p class="focus-copy">Branches, names, and connections</p>
         </div>
 
         <label class="search-field">
@@ -39,7 +45,7 @@
         </label>
 
         <div class="quick-row" aria-label="Tree shortcuts">
-          <button id="focusMeButton" type="button" title="Center the main line">Main</button>
+          <button id="focusMeButton" type="button" title="Center the founding generation">Root</button>
           <button id="fitButton" type="button" title="Fit full tree">All</button>
           <button id="directButton" type="button" title="Show lineage view">Line</button>
         </div>
@@ -60,7 +66,7 @@
         </section>
 
         <section class="lineage-card" aria-label="Direct lineage">
-          <h2>Main Line</h2>
+          <h2 id="lineageTitle">Main Line</h2>
           <div id="lineageList" class="lineage-list"></div>
         </section>
       </aside>

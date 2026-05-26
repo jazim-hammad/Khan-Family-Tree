@@ -253,6 +253,8 @@ const searchResults = document.getElementById("searchResults");
 const branchFilter = document.getElementById("branchFilter");
 const detailPanel = document.getElementById("detailPanel");
 const selectedPill = document.getElementById("selectedPill");
+const menuToggle = document.getElementById("menuToggle");
+const menuPanel = document.getElementById("menuPanel");
 
 let waterCanvas;
 let waterContext;
@@ -260,9 +262,9 @@ let waterFrame = 0;
 
 const visiblePeople = peopleList.filter((person) => person.layout);
 const state = {
-  selectedId: FOCUS_ID,
-  filter: "direct",
-  zoom: 0.46,
+  selectedId: null,
+  filter: "all",
+  zoom: 0.34,
   panX: 0,
   panY: 0,
 };
@@ -314,28 +316,37 @@ function init() {
   linksEl.setAttribute("viewBox", `0 0 ${WORLD.width} ${WORLD.height}`);
   world.style.width = `${WORLD.width}px`;
   world.style.height = `${WORLD.height}px`;
-  branchFilter.value = "direct";
+  branchFilter.value = "all";
 
   renderStats();
   renderLineage();
   renderTree();
-  renderDetails(FOCUS_ID);
+  hideDetails();
   bindEvents();
   startWaterCanvas();
 
-  requestAnimationFrame(() => centerOn(FOCUS_ID, 0.58));
+  requestAnimationFrame(() => fitVisible());
 }
 
 function bindEvents() {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = menuPanel.classList.toggle("is-open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+    menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+  });
+
   document.getElementById("focusMeButton").addEventListener("click", () => {
-    branchFilter.value = "direct";
-    state.filter = "direct";
-    selectPerson(FOCUS_ID, true);
+    branchFilter.value = "all";
+    state.filter = "all";
+    selectPerson("nathay-khan", true);
   });
 
   document.getElementById("fitButton").addEventListener("click", () => {
     branchFilter.value = "all";
     state.filter = "all";
+    state.selectedId = null;
+    hideDetails();
+    renderLineage();
     renderTree();
     fitVisible();
   });
@@ -344,7 +355,7 @@ function bindEvents() {
     branchFilter.value = "direct";
     state.filter = "direct";
     renderTree();
-    centerOn(FOCUS_ID, 0.58);
+    fitVisible();
   });
 
   document.getElementById("zoomOut").addEventListener("click", () => zoomBy(0.86));
@@ -360,7 +371,7 @@ function bindEvents() {
     if (state.filter === "all") {
       fitVisible();
     } else if (state.filter === "direct") {
-      centerOn(FOCUS_ID, 0.58);
+      fitVisible();
     } else {
       fitVisible();
     }
@@ -433,6 +444,7 @@ function renderTree() {
 }
 
 function renderNodes() {
+  const activeLineage = getActiveLineageSet();
   const html = visiblePeople
     .map((person) => {
       const hidden = !passesFilter(person.id);
@@ -440,7 +452,7 @@ function renderNodes() {
       const classes = [
         "person-node",
         person.id === state.selectedId ? "is-selected" : "",
-        directFocusSet.has(person.id) ? "is-direct" : "",
+        activeLineage.has(person.id) ? "is-direct" : "",
         person.isFocus ? "is-focus" : "",
         hidden ? "is-hidden" : "",
         shouldMute(person.id) ? "is-muted" : "",
@@ -466,11 +478,12 @@ function renderNodes() {
 }
 
 function renderLinks() {
+  const activeLineage = getActiveLineageSet();
   const paths = [];
   for (const union of unions) {
     const visiblePartners = union.partners.filter((id) => people.get(id)?.layout && passesFilter(id));
     const cross = union.cross ? " cross" : "";
-    const direct = union.partners.some((id) => directFocusSet.has(id)) ? " direct" : "";
+    const direct = union.partners.some((id) => activeLineage.has(id)) ? " direct" : "";
 
     if (visiblePartners.length >= 2) {
       const [first, second] = visiblePartners;
@@ -484,7 +497,7 @@ function renderLinks() {
       const child = people.get(childId);
       if (!child?.layout || !passesFilter(childId)) continue;
       const childCenter = centerOf(childId);
-      const isDirect = directFocusSet.has(childId) && union.partners.some((id) => directFocusSet.has(id));
+      const isDirect = activeLineage.has(childId) && union.partners.some((id) => activeLineage.has(id));
       paths.push(pathElement(parentPath(start, childCenter), `link parent${isDirect ? " direct" : ""}`));
     }
   }
@@ -529,7 +542,10 @@ function unionCenter(partnerIds) {
 
 function renderDetails(id) {
   const person = people.get(id);
-  if (!person) return;
+  if (!person) {
+    hideDetails();
+    return;
+  }
 
   const parents = getParents(id);
   const spouses = getSpouses(id);
@@ -545,10 +561,13 @@ function renderDetails(id) {
 
   detailPanel.innerHTML = `
     <div class="detail-card">
-      <div>
-        <p class="detail-kicker">${escapeHtml(relation)}</p>
-        <h2>${escapeHtml(person.name)}</h2>
-        <p class="detail-subtle">${escapeHtml(branchLabels[person.branch] || branchLabels.partner)}</p>
+      <div class="detail-head">
+        <div>
+          <p class="detail-kicker">${escapeHtml(relation)}</p>
+          <h2>${escapeHtml(person.name)}</h2>
+          <p class="detail-subtle">${escapeHtml(branchLabels[person.branch] || branchLabels.partner)}</p>
+        </div>
+        <button class="detail-close" type="button" title="Close details" aria-label="Close details">x</button>
       </div>
       <div class="photo-slot" aria-label="Photo placeholder">${escapeHtml(initials)}</div>
       <div class="detail-grid">
@@ -560,10 +579,25 @@ function renderDetails(id) {
       </div>
     </div>
   `;
+  detailPanel.classList.add("is-open");
 
   detailPanel.querySelectorAll("[data-select-id]").forEach((button) => {
     button.addEventListener("click", () => selectPerson(button.dataset.selectId, true));
   });
+
+  detailPanel.querySelector(".detail-close").addEventListener("click", () => {
+    state.selectedId = null;
+    hideDetails();
+    renderLineage();
+    renderTree();
+    updateSelectedPill();
+    fitVisible();
+  });
+}
+
+function hideDetails() {
+  detailPanel.classList.remove("is-open");
+  detailPanel.innerHTML = "";
 }
 
 function detailTextRow(label, value) {
@@ -616,21 +650,14 @@ function renderStats() {
 }
 
 function renderLineage() {
-  const lineage = [
-    "nathay-khan",
-    "wazeer-begum",
-    "mohammad-basheer-khan",
-    "iqbal-begum",
-    "amjad-pervaiz-khan",
-    "tahira-ilyas",
-    "hammad-amjad-khan",
-    "farina-azhar-khan",
-    "jazim-hammad-khan",
-  ];
+  const lineageTitle = document.getElementById("lineageTitle");
+  const lineage = getLineageListFor(state.selectedId);
+  lineageTitle.textContent = state.selectedId ? "Selected Line" : "Main Line";
 
   document.getElementById("lineageList").innerHTML = lineage
     .map((id) => {
       const person = people.get(id);
+      if (!person) return "";
       return `
         <div class="lineage-item">
           <span class="lineage-dot" aria-hidden="true"></span>
@@ -643,6 +670,38 @@ function renderLineage() {
   document.querySelectorAll(".lineage-item button").forEach((button) => {
     button.addEventListener("click", () => selectPerson(button.dataset.selectId, true));
   });
+}
+
+function getLineageListFor(id) {
+  if (!id) {
+    return [
+      "nathay-khan",
+      "wazeer-begum",
+      "mohammad-basheer-khan",
+      "iqbal-begum",
+      "amjad-pervaiz-khan",
+      "tahira-ilyas",
+      "hammad-amjad-khan",
+      "farina-azhar-khan",
+      "jazim-hammad-khan",
+    ];
+  }
+
+  const ids = [
+    ...getAncestors(id),
+    ...getParents(id),
+    id,
+    ...getSpouses(id).filter((item) => item.id).map((item) => item.id),
+    ...getChildren(id),
+  ];
+
+  return unique(ids)
+    .filter((personId) => people.has(personId))
+    .sort((a, b) => {
+      const first = people.get(a);
+      const second = people.get(b);
+      return first.generation - second.generation || (first.layout?.y || 0) - (second.layout?.y || 0);
+    });
 }
 
 function renderSearch() {
@@ -691,6 +750,9 @@ function renderSearch() {
     button.addEventListener("click", () => {
       searchInput.value = "";
       searchResults.classList.remove("is-open");
+      menuPanel.classList.remove("is-open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Open menu");
       selectPerson(button.dataset.id, true);
     });
   });
@@ -704,6 +766,7 @@ function selectPerson(id, shouldCenterNode) {
   }
 
   state.selectedId = id;
+  renderLineage();
   renderTree();
   renderDetails(id);
   updateSelectedPill();
@@ -715,7 +778,7 @@ function selectPerson(id, shouldCenterNode) {
 
 function updateSelectedPill() {
   const person = people.get(state.selectedId);
-  selectedPill.textContent = person ? person.name : "Khan Family Tree";
+  selectedPill.textContent = person ? person.name : "Full family";
 }
 
 function passesFilter(id) {
@@ -723,7 +786,7 @@ function passesFilter(id) {
   if (!person?.layout) return false;
 
   if (state.filter === "all") return true;
-  if (state.filter === "direct") return directFocusSet.has(id);
+  if (state.filter === "direct") return getActiveLineageSet().has(id);
   if (state.filter === "connected") return crossMarriageSet.has(id);
 
   if (person.branch === state.filter) return true;
@@ -734,17 +797,22 @@ function shouldMute(id) {
   if (state.filter !== "all") return false;
   if (!state.selectedId || id === state.selectedId) return false;
 
-  const emphasis = new Set([
-    state.selectedId,
-    ...getParents(state.selectedId),
-    ...getChildren(state.selectedId),
-    ...getSiblings(state.selectedId),
-    ...getSpouses(state.selectedId)
-      .filter((item) => item.id)
-      .map((item) => item.id),
-  ]);
+  return !getActiveLineageSet().has(id);
+}
 
-  return !emphasis.has(id) && !directFocusSet.has(id);
+function getActiveLineageSet() {
+  if (state.selectedId) return getSelectedLineageSet(state.selectedId);
+  if (state.filter === "direct") return new Set(directFocusSet);
+  return new Set();
+}
+
+function getSelectedLineageSet(id) {
+  return new Set([
+    ...getAncestors(id),
+    id,
+    ...getSpouses(id).filter((item) => item.id).map((item) => item.id),
+    ...getChildren(id),
+  ]);
 }
 
 function isPartnerOfBranch(id, branch) {
@@ -831,11 +899,11 @@ function nearestAnyAnchor(id) {
 }
 
 function relationToFocus(id) {
-  if (id === FOCUS_ID) return "Selected person";
-  if (getSpouses(FOCUS_ID).some((item) => item.id === id)) return "Spouse in the main line";
-  if (getParents(FOCUS_ID).includes(id)) return "Parent in the main line";
-  if (getSiblings(FOCUS_ID).includes(id)) return "Sibling in the main line";
-  if (getAncestors(FOCUS_ID).includes(id)) return "Direct ancestor";
+  if (id === state.selectedId) return "Selected person";
+  if (state.selectedId && getSpouses(state.selectedId).some((item) => item.id === id)) return "Spouse";
+  if (state.selectedId && getParents(state.selectedId).includes(id)) return "Parent";
+  if (state.selectedId && getChildren(state.selectedId).includes(id)) return "Child";
+  if (state.selectedId && getAncestors(state.selectedId).includes(id)) return "Ancestor";
   if (crossMarriageSet.has(id)) return "Cross-branch connection";
   return branchLabels[people.get(id)?.branch] || "Family record";
 }
@@ -934,18 +1002,18 @@ function drawWater() {
   waterFrame += 0.006;
 
   const base = waterContext.createLinearGradient(0, 0, width, height);
-  base.addColorStop(0, "rgba(249, 252, 251, 0.94)");
-  base.addColorStop(0.45, "rgba(234, 244, 240, 0.74)");
-  base.addColorStop(1, "rgba(248, 244, 238, 0.88)");
+  base.addColorStop(0, "rgba(11, 10, 8, 0.94)");
+  base.addColorStop(0.48, "rgba(18, 15, 12, 0.88)");
+  base.addColorStop(1, "rgba(7, 6, 4, 0.94)");
   waterContext.fillStyle = base;
   waterContext.fillRect(0, 0, width, height);
 
   const bands = [
-    { y: 0.15, amp: 28, alpha: 0.3, color: "255,255,255", speed: 0.7 },
-    { y: 0.32, amp: 42, alpha: 0.22, color: "197,224,216", speed: 0.9 },
-    { y: 0.5, amp: 36, alpha: 0.24, color: "255,255,255", speed: 1.1 },
-    { y: 0.68, amp: 54, alpha: 0.17, color: "218,184,165", speed: 0.6 },
-    { y: 0.82, amp: 30, alpha: 0.26, color: "245,248,242", speed: 1.25 },
+    { y: 0.14, amp: 28, alpha: 0.08, color: "244,236,220", speed: 0.7 },
+    { y: 0.3, amp: 42, alpha: 0.1, color: "106,219,207", speed: 0.9 },
+    { y: 0.5, amp: 36, alpha: 0.08, color: "197,139,94", speed: 1.1 },
+    { y: 0.68, amp: 54, alpha: 0.08, color: "207,123,157", speed: 0.6 },
+    { y: 0.84, amp: 30, alpha: 0.08, color: "244,236,220", speed: 1.25 },
   ];
 
   for (const band of bands) {
