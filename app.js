@@ -1,6 +1,8 @@
-const NODE = { width: 220, height: 74 };
-const WORLD = { width: 3120, height: 3720 };
-const COL = [80, 620, 1160, 1700, 2240, 2780];
+const NODE = { width: 200, height: 74 };
+const WORLD = { width: 9100, height: 2560 };
+const ROW = [130, 570, 1010, 1450, 1890, 2330];
+const LAYOUT = { sideMargin: 180, slotGap: 58 };
+const MIN_ZOOM = 0.08;
 const FOCUS_ID = "jazim-hammad-khan";
 
 const branchLabels = {
@@ -13,8 +15,121 @@ const branchLabels = {
   partner: "Family by marriage",
 };
 
-const xy = (generation, y) => ({ x: COL[generation], y });
-const partnerXy = (generation, y) => ({ x: COL[generation] + 250, y });
+const familyLineById = {
+  "nathay-khan": "Khan family",
+  "wazeer-begum": "Khan family",
+  "mohammad-sharif-khan": "Khan family",
+  "razia-sultana": "Khan family",
+  "mohammad-basheer-khan": "Khan family",
+  "iqbal-begum": "Khan family",
+  "zakiya-sultana": "Khan family",
+  "naseer-khan": "Khan family",
+  "dr-arshad-khan": "Khan family",
+  "mohammad-ashraf": "Khan family",
+  "sadia": "Khan family",
+  "asifa": "Khan family",
+  "shakeela": "Khan family",
+  "fouzia": "Khan family",
+  "amjad-pervaiz-khan": "Khan family",
+  "tahira-ilyas": "Khan family",
+  "nasira-zia": "Khan family",
+  "tehsin-afza": "Khan family",
+  "anjum": "Khan family",
+  "hammad-amjad-khan": "Khan family",
+  "farjad-amjad-khan": "Khan family",
+  "atika-amjad": "Khan family",
+  "arshia-amjad": "Khan family",
+  "samiha-amjad": "Khan family",
+  "azhar-iqbal-khan": "Khan family",
+  "rashida-hameed": "Khan family",
+  "farina-azhar-khan": "Khan family",
+  "saad-azhar-khan": "Khan family",
+  "tehmina-azhar-khan": "Khan family",
+  "raziqa-azhar-khan": "Khan family",
+  "jawad-azhar-khan": "Khan family",
+  "aleeza-noor": "Khan family",
+  "jazim-hammad-khan": "Khan family",
+  "azlan-hammad": "Khan family",
+  "mohammad-essa-farjad-khan": "Khan family",
+  "mohammad-zakariyya-farjad-khan": "Khan family",
+  "gulrez-khan": "Khan family",
+  "nuzat-khan": "Khan family",
+  "faisal-khan": "Khan family",
+  "raheel-khan": "Khan family",
+
+  "malik-taj-deen": "Malik family",
+  "malik-salahuddin": "Malik family",
+  "malik-ghayasuddin": "Malik family",
+  "malik-ziauddin": "Malik family",
+  "azra": "Malik family",
+  "tahira": "Malik family",
+  "shahida": "Malik family",
+  "zahida": "Malik family",
+  "qaisira": "Malik family",
+
+  "hakim-ali": "Ali family",
+  "m-abid-ali": "Ali family",
+  "m-khalid-zakiya": "Ali family",
+  "m-jafer": "Ali family",
+  "fareeda": "Ali family",
+  "naheed-akhter": "Ali family",
+  "rukhsana-kausar": "Ali family",
+  "fakhara-parveen": "Ali family",
+  "ghazala-parveen": "Ali family",
+  "raheela-tabassum": "Ali family",
+  "m-tariq": "Ali family",
+  "sami-ul-haq": "Ali family",
+
+  "dr-abdul-karim": "Qazi family",
+  "dr-abdul-rehman": "Qazi family",
+  "saima-karim": "Qazi family",
+  "vanees-karim": "Qazi family",
+  "sadaf-nazli": "Qazi family",
+  "nasir-karim": "Qazi family",
+  "abdul-aziz": "Qazi family",
+  "hafsa-vanees": "Qazi family",
+  "affan": "Qazi family",
+  "shahmir": "Qazi family",
+
+  "mohammad-khalid": "Khalid family",
+  "shaila-khan": "Khalid family",
+  "nudrat": "Khalid family",
+  "imran-khalid": "Khalid family",
+  "usman-khalid": "Khalid family",
+  "nosheen-afza": "Khalid family",
+
+  "faisal-bhatti": "Bhatti family",
+  "imaan-bhatti": "Bhatti family",
+  "sameen-bhatti": "Bhatti family",
+  "aiza-bhatti": "Bhatti family",
+  "zayan-bhatti": "Bhatti family",
+
+  "nauman-qureshi": "Qureshi family",
+  "azaan": "Qureshi family",
+  "inaya": "Qureshi family",
+  "hannan": "Qureshi family",
+
+  "talat-jameel-sohail": "Sohail family",
+  "tayaba": "Sohail family",
+  "madiha-sohail": "Sohail family",
+  "fahad-sohail": "Sohail family",
+  "sumbal-sohail": "Sohail family",
+  "zohaib-sohail": "Sohail family",
+  "uzair-sohail": "Sohail family",
+
+  "basmah-athar": "Athar family",
+  "khawar-aziz": "Aziz family",
+  "rehan-ahmed": "Ahmed family",
+  "halima-younes": "Younes family",
+  "abdul-mueez": "Mueez family",
+  "irum-fatima": "Fatima family",
+  "shahzad-hashmi": "Hashmi family",
+  "syed-saif-shah": "Shah family",
+  "nazish-ijaz": "Ijaz family",
+};
+
+const xy = (generation, order) => ({ seedGeneration: generation, seedOrder: order, partnerLane: 0 });
+const partnerXy = (generation, order) => ({ seedGeneration: generation, seedOrder: order, partnerLane: 1 });
 
 const peopleList = [
   { id: "nathay-khan", name: "Nathay Khan", branch: "root", generation: 1, layout: xy(0, 1510) },
@@ -243,6 +358,8 @@ const unions = [
   { id: "naseer-fehmeeda", partners: ["naseer-khan", "fehmeeda"], children: ["gulrez-khan", "nuzat-khan", "faisal-khan", "raheel-khan"] },
 ];
 
+applyTopDownLayout(peopleList);
+
 const people = new Map(peopleList.map((person) => [person.id, person]));
 const linksEl = document.getElementById("links");
 const nodesEl = document.getElementById("nodes");
@@ -258,7 +375,6 @@ const menuPanel = document.getElementById("menuPanel");
 
 let waterCanvas;
 let waterContext;
-let waterFrame = 0;
 
 const visiblePeople = peopleList.filter((person) => person.layout);
 const state = {
@@ -423,7 +539,7 @@ function bindEvents() {
       const worldX = (event.clientX - rect.left - state.panX) / state.zoom;
       const worldY = (event.clientY - rect.top - state.panY) / state.zoom;
       const factor = event.deltaY < 0 ? 1.08 : 0.92;
-      state.zoom = clamp(state.zoom * factor, 0.22, 1.35);
+      state.zoom = clamp(state.zoom * factor, MIN_ZOOM, 1.35);
       state.panX = event.clientX - rect.left - worldX * state.zoom;
       state.panY = event.clientY - rect.top - worldY * state.zoom;
       applyTransform();
@@ -449,6 +565,7 @@ function renderNodes() {
     .map((person) => {
       const hidden = !passesFilter(person.id);
       const spouses = getSpouses(person.id).map((item) => item.name || item.label).filter(Boolean);
+      const familyLine = getFamilyLineLabel(person.id);
       const classes = [
         "person-node",
         person.id === state.selectedId ? "is-selected" : "",
@@ -463,7 +580,7 @@ function renderNodes() {
       return `
         <button class="${classes}" type="button" data-id="${person.id}" style="left:${person.layout.x}px;top:${person.layout.y}px">
           <span class="node-name">${escapeHtml(person.name)}</span>
-          <span class="node-branch">${escapeHtml(branchLabels[person.branch] || branchLabels.partner)}</span>
+          <span class="node-branch">${escapeHtml(familyLine)}</span>
           ${person.born ? `<span class="node-birth">Born ${escapeHtml(person.born)}</span>` : ""}
           ${spouses.length ? `<span class="node-spouses">${escapeHtml(spouses.join(", "))}</span>` : ""}
         </button>
@@ -509,19 +626,79 @@ function pathElement(d, className) {
   return `<path class="${className}" d="${d}"></path>`;
 }
 
+function applyTopDownLayout(records) {
+  const rows = new Map();
+  const slot = NODE.width + LAYOUT.slotGap;
+
+  for (const person of records) {
+    if (!person.layout) continue;
+    const row = person.layout.seedGeneration ?? Math.max(0, person.generation - 1);
+    const rowItems = rows.get(row) || [];
+    rowItems.push(person);
+    rows.set(row, rowItems);
+  }
+
+  const sortedRows = [...rows.keys()].sort((a, b) => a - b);
+  const rowWidths = new Map();
+  let widestRow = 0;
+
+  for (const row of sortedRows) {
+    const rowItems = rows.get(row);
+    rowItems.sort((a, b) => {
+      const first = a.layout;
+      const second = b.layout;
+      return (
+        first.seedOrder - second.seedOrder ||
+        first.partnerLane - second.partnerLane ||
+        a.name.localeCompare(b.name)
+      );
+    });
+
+    const rowWidth = Math.max(NODE.width, (rowItems.length - 1) * slot + NODE.width);
+    rowWidths.set(row, rowWidth);
+    widestRow = Math.max(widestRow, rowWidth);
+  }
+
+  WORLD.width = Math.ceil(widestRow + LAYOUT.sideMargin * 2);
+  WORLD.height = Math.max(...ROW) + NODE.height + 180;
+
+  for (const row of sortedRows) {
+    const rowItems = rows.get(row);
+    const rowWidth = rowWidths.get(row);
+    const startX = (WORLD.width - rowWidth) / 2;
+    const y = ROW[row] ?? ROW[ROW.length - 1] + (row - ROW.length + 1) * 440;
+
+    rowItems.forEach((person, index) => {
+      person.layout = {
+        x: Math.round(startX + index * slot),
+        y,
+        seedGeneration: row,
+        seedOrder: person.layout.seedOrder,
+        partnerLane: person.layout.partnerLane,
+      };
+    });
+  }
+}
+
 function parentPath(start, end) {
-  const distance = Math.max(90, Math.abs(end.x - start.x));
-  const c1x = start.x + distance * 0.44;
-  const c2x = end.x - distance * 0.42;
-  const wave = Math.min(90, Math.abs(end.y - start.y) * 0.16);
-  return `M ${start.x} ${start.y} C ${c1x} ${start.y + wave}, ${c2x} ${end.y - wave}, ${end.x} ${end.y}`;
+  const startY = start.y + NODE.height / 2;
+  const endY = end.y - NODE.height / 2;
+  const distance = Math.max(120, Math.abs(endY - startY));
+  const c1y = startY + distance * 0.45;
+  const c2y = endY - distance * 0.45;
+  const drift = Math.min(120, Math.abs(end.x - start.x) * 0.05);
+  return `M ${start.x} ${startY} C ${start.x + drift} ${c1y}, ${end.x - drift} ${c2y}, ${end.x} ${endY}`;
 }
 
 function spousePath(start, end) {
-  const dx = end.x - start.x;
+  const direction = end.x >= start.x ? 1 : -1;
+  const startX = start.x + (NODE.width / 2) * direction;
+  const endX = end.x - (NODE.width / 2) * direction;
+  const dx = endX - startX;
   const dy = end.y - start.y;
-  const bend = Math.max(70, Math.abs(dx) * 0.36);
-  return `M ${start.x} ${start.y} C ${start.x + bend} ${start.y + dy * 0.12}, ${end.x - bend} ${end.y - dy * 0.12}, ${end.x} ${end.y}`;
+  const bend = Math.max(70, Math.abs(dx) * 0.28);
+  const arc = Math.min(130, Math.max(42, Math.abs(dx) * 0.045));
+  return `M ${startX} ${start.y} C ${startX + bend * direction} ${start.y - arc + dy * 0.1}, ${endX - bend * direction} ${end.y - arc - dy * 0.1}, ${endX} ${end.y}`;
 }
 
 function centerOf(id) {
@@ -552,6 +729,7 @@ function renderDetails(id) {
   const children = getChildren(id);
   const siblings = getSiblings(id).filter((siblingId) => siblingId !== id);
   const relation = relationToFocus(id);
+  const familyLine = getFamilyLineLabel(id);
   const initials = person.name
     .split(/\s+/)
     .filter(Boolean)
@@ -565,13 +743,14 @@ function renderDetails(id) {
         <div>
           <p class="detail-kicker">${escapeHtml(relation)}</p>
           <h2>${escapeHtml(person.name)}</h2>
-          <p class="detail-subtle">${escapeHtml(branchLabels[person.branch] || branchLabels.partner)}</p>
+          <p class="detail-subtle">${escapeHtml(familyLine)}</p>
         </div>
         <button class="detail-close" type="button" title="Close details" aria-label="Close details">x</button>
       </div>
       <div class="photo-slot" aria-label="Photo placeholder">${escapeHtml(initials)}</div>
       <div class="detail-grid">
         ${detailTextRow("Born", person.born || "Not added yet")}
+        ${detailTextRow("Family line", familyLine)}
         ${detailButtonsRow("Parents", parents)}
         ${detailSpouseRow(spouses)}
         ${detailButtonsRow("Children", children)}
@@ -719,13 +898,15 @@ function renderSearch() {
         .map((item) => item.name || item.label)
         .join(" ");
       const branch = (branchLabels[person.branch] || "").toLowerCase();
+      const familyLine = getFamilyLineLabel(person.id).toLowerCase();
       const spouseText = spouseNames.toLowerCase();
       let score = null;
 
       if (name.startsWith(query)) score = 0;
       else if (name.includes(query)) score = 1;
       else if (spouseText.includes(query)) score = 2;
-      else if (branch.includes(query)) score = 3;
+      else if (familyLine.includes(query)) score = 3;
+      else if (branch.includes(query)) score = 4;
 
       return { person, score };
     })
@@ -739,7 +920,7 @@ function renderSearch() {
       return `
         <button class="search-result" type="button" data-id="${person.id}">
           ${escapeHtml(person.name)}
-          <small>${escapeHtml(branchLabels[person.branch] || branchLabels.partner)}</small>
+          <small>${escapeHtml(getFamilyLineLabel(person.id))}</small>
         </button>
       `;
     })
@@ -772,7 +953,7 @@ function selectPerson(id, shouldCenterNode) {
   updateSelectedPill();
 
   if (shouldCenterNode) {
-    centerOn(nearestVisibleAnchor(id), Math.max(state.zoom, 0.55));
+    centerOn(nearestVisibleAnchor(id), Math.max(state.zoom, selectedNodeZoom()));
   }
 }
 
@@ -908,6 +1089,10 @@ function relationToFocus(id) {
   return branchLabels[people.get(id)?.branch] || "Family record";
 }
 
+function getFamilyLineLabel(id) {
+  return familyLineById[id] || branchLabels[people.get(id)?.branch] || "Family line unknown";
+}
+
 function unique(items) {
   return [...new Set(items)];
 }
@@ -916,10 +1101,12 @@ function centerOn(id, zoom = state.zoom) {
   const person = people.get(id);
   if (!person?.layout) return;
 
-  state.zoom = clamp(zoom, 0.22, 1.35);
+  state.zoom = clamp(zoom, MIN_ZOOM, 1.35);
   const rect = viewport.getBoundingClientRect();
-  state.panX = rect.width / 2 - (person.layout.x + NODE.width / 2) * state.zoom;
-  state.panY = rect.height / 2 - (person.layout.y + NODE.height / 2) * state.zoom;
+  const targetX = rect.width / 2;
+  const targetY = window.innerWidth <= 760 ? rect.height * 0.26 : rect.height / 2;
+  state.panX = targetX - (person.layout.x + NODE.width / 2) * state.zoom;
+  state.panY = targetY - (person.layout.y + NODE.height / 2) * state.zoom;
   applyTransform();
 }
 
@@ -939,10 +1126,13 @@ function fitVisible() {
   );
 
   const rect = viewport.getBoundingClientRect();
-  const padding = 120;
+  const padding = window.innerWidth <= 760 ? 80 : 160;
   const zoomX = rect.width / (bounds.maxX - bounds.minX + padding * 2);
   const zoomY = rect.height / (bounds.maxY - bounds.minY + padding * 2);
-  state.zoom = clamp(Math.min(zoomX, zoomY), 0.22, 0.72);
+  const fitZoom = Math.min(zoomX, zoomY);
+  const wideTree = active.length > 32;
+  const heightFitZoom = window.innerWidth <= 760 ? clamp(zoomY * 0.9, 0.26, 0.4) : clamp(zoomY * 0.9, 0.28, 0.48);
+  state.zoom = wideTree ? heightFitZoom : clamp(fitZoom, MIN_ZOOM, 0.78);
   state.panX = rect.width / 2 - ((bounds.minX + bounds.maxX) / 2) * state.zoom;
   state.panY = rect.height / 2 - ((bounds.minY + bounds.maxY) / 2) * state.zoom;
   applyTransform();
@@ -955,7 +1145,7 @@ function zoomBy(factor) {
   const worldX = (pivotX - state.panX) / state.zoom;
   const worldY = (pivotY - state.panY) / state.zoom;
 
-  state.zoom = clamp(state.zoom * factor, 0.22, 1.35);
+  state.zoom = clamp(state.zoom * factor, MIN_ZOOM, 1.35);
   state.panX = pivotX - worldX * state.zoom;
   state.panY = pivotY - worldY * state.zoom;
   applyTransform();
@@ -967,6 +1157,10 @@ function applyTransform() {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function selectedNodeZoom() {
+  return window.innerWidth <= 760 ? 0.82 : 0.62;
 }
 
 function escapeHtml(value) {
@@ -982,7 +1176,6 @@ function startWaterCanvas() {
   waterCanvas = document.getElementById("waterCanvas");
   waterContext = waterCanvas.getContext("2d");
   resizeWaterCanvas();
-  requestAnimationFrame(drawWater);
 }
 
 function resizeWaterCanvas() {
@@ -993,13 +1186,13 @@ function resizeWaterCanvas() {
   waterCanvas.style.width = `${window.innerWidth}px`;
   waterCanvas.style.height = `${window.innerHeight}px`;
   waterContext?.setTransform(ratio, 0, 0, ratio, 0, 0);
+  drawWater();
 }
 
 function drawWater() {
   if (!waterContext) return;
   const width = window.innerWidth;
   const height = window.innerHeight;
-  waterFrame += 0.006;
 
   const base = waterContext.createLinearGradient(0, 0, width, height);
   base.addColorStop(0, "rgba(11, 10, 8, 0.94)");
@@ -1008,37 +1201,17 @@ function drawWater() {
   waterContext.fillStyle = base;
   waterContext.fillRect(0, 0, width, height);
 
-  const bands = [
-    { y: 0.14, amp: 28, alpha: 0.08, color: "244,236,220", speed: 0.7 },
-    { y: 0.3, amp: 42, alpha: 0.1, color: "106,219,207", speed: 0.9 },
-    { y: 0.5, amp: 36, alpha: 0.08, color: "197,139,94", speed: 1.1 },
-    { y: 0.68, amp: 54, alpha: 0.08, color: "207,123,157", speed: 0.6 },
-    { y: 0.84, amp: 30, alpha: 0.08, color: "244,236,220", speed: 1.25 },
-  ];
-
-  for (const band of bands) {
-    drawBand(width, height, band);
-  }
-
-  requestAnimationFrame(drawWater);
+  drawGlow(width * 0.18, height * 0.18, width * 0.42, "197,139,94", 0.18);
+  drawGlow(width * 0.78, height * 0.2, width * 0.36, "106,219,207", 0.14);
+  drawGlow(width * 0.58, height * 0.82, width * 0.44, "207,123,157", 0.09);
+  drawGlow(width * 0.45, height * 0.45, width * 0.58, "244,236,220", 0.045);
 }
 
-function drawBand(width, height, band) {
-  const baseY = height * band.y;
-  waterContext.beginPath();
-  waterContext.moveTo(0, baseY);
-
-  for (let x = 0; x <= width + 24; x += 24) {
-    const y =
-      baseY +
-      Math.sin(x * 0.006 + waterFrame * 90 * band.speed) * band.amp +
-      Math.cos(x * 0.013 - waterFrame * 70 * band.speed) * (band.amp * 0.36);
-    waterContext.lineTo(x, y);
-  }
-
-  waterContext.lineTo(width, height);
-  waterContext.lineTo(0, height);
-  waterContext.closePath();
-  waterContext.fillStyle = `rgba(${band.color}, ${band.alpha})`;
-  waterContext.fill();
+function drawGlow(x, y, radius, color, alpha) {
+  const glow = waterContext.createRadialGradient(x, y, 0, x, y, radius);
+  glow.addColorStop(0, `rgba(${color}, ${alpha})`);
+  glow.addColorStop(0.48, `rgba(${color}, ${alpha * 0.36})`);
+  glow.addColorStop(1, `rgba(${color}, 0)`);
+  waterContext.fillStyle = glow;
+  waterContext.fillRect(0, 0, window.innerWidth, window.innerHeight);
 }
