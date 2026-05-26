@@ -1,7 +1,8 @@
 const NODE = { width: 200, height: 74 };
 const WORLD = { width: 9100, height: 2560 };
 const ROW = [130, 570, 1010, 1450, 1890, 2330];
-const LAYOUT = { sideMargin: 180, slotGap: 58 };
+const LAYOUT = { sideMargin: 180, slotGap: 34 };
+const COMPACT_LAYOUT = { sideMargin: 180, top: 130, rowGap: 620, slotGap: 34, bottom: 180 };
 const MIN_ZOOM = 0.08;
 const FOCUS_ID = "jazim-hammad-khan";
 
@@ -69,7 +70,6 @@ const familyLineById = {
 
   "hakim-ali": "Ali family",
   "m-abid-ali": "Ali family",
-  "m-khalid-zakiya": "Ali family",
   "m-jafer": "Ali family",
   "fareeda": "Ali family",
   "naheed-akhter": "Ali family",
@@ -109,13 +109,17 @@ const familyLineById = {
   "inaya": "Qureshi family",
   "hannan": "Qureshi family",
 
-  "talat-jameel-sohail": "Sohail family",
-  "tayaba": "Sohail family",
-  "madiha-sohail": "Sohail family",
-  "fahad-sohail": "Sohail family",
-  "sumbal-sohail": "Sohail family",
-  "zohaib-sohail": "Sohail family",
-  "uzair-sohail": "Sohail family",
+  "talat-jameel-sohail": "Khan family",
+  "tayaba": "Khan family",
+  "madiha-sohail": "Khan family",
+  "fahad-sohail": "Khan family",
+  "sumbal-sohail": "Khan family",
+  "zohaib-sohail": "Khan family",
+  "uzair-sohail": "Khan family",
+  "momin-khan": "Khan family",
+  "zarwa-khan": "Khan family",
+  "ashar-khan": "Khan family",
+  "hamdan-khan": "Khan family",
 
   "basmah-athar": "Athar family",
   "khawar-aziz": "Aziz family",
@@ -124,8 +128,40 @@ const familyLineById = {
   "abdul-mueez": "Mueez family",
   "irum-fatima": "Fatima family",
   "shahzad-hashmi": "Hashmi family",
-  "syed-saif-shah": "Shah family",
+  "fatima-hashmi": "Hashmi family",
+  "amjad-bilal-hashmi": "Hashmi family",
+  "nafeesa-hashmi": "Hashmi family",
+  "ghulam-fatima-hashmi": "Hashmi family",
+  "syed-said-shah": "Shah family",
+  "mohammad-saim": "Shah family",
+  "mohammad-abdul-rehman-shah": "Shah family",
   "nazish-ijaz": "Ijaz family",
+  "aavaiz-noor": "Khan family",
+  "rijja-noor": "Khan family",
+  "ayesha-noor-jawad": "Khan family",
+  "maria-noor": "Khan family",
+  "romaisa": "Khan family",
+  "zoha": "Khan family",
+  "fayaz": "Fayaz family",
+  "subhan-madiha": "Fayaz family",
+  "fatima-madiha": "Fayaz family",
+  "inaam": "Inaam family",
+  "khadija-sumbal": "Inaam family",
+  "anabiya-afraima": "Inaam family",
+};
+
+const layoutOverrides = {
+  "hammad-amjad-khan": { seedOrder: 1830 },
+  "farina-azhar-khan": { seedOrder: 1831, partnerLane: 1 },
+  "aleeza-noor": { seedOrder: 1680 },
+  "jazim-hammad-khan": { seedOrder: 1681 },
+  "basmah-athar": { seedOrder: 1682, partnerLane: 1 },
+  "azlan-hammad": { seedOrder: 1683 },
+  "samiha-amjad": { seedOrder: 2200 },
+  "nauman-qureshi": { seedOrder: 2201, partnerLane: 1 },
+  "azaan": { seedOrder: 2600 },
+  "inaya": { seedOrder: 2601 },
+  "hannan": { seedOrder: 2602 },
 };
 
 const xy = (generation, order) => ({ seedGeneration: generation, seedOrder: order, partnerLane: 0 });
@@ -146,10 +182,10 @@ const peopleList = [
   { id: "fehmeeda", name: "Fehmeeda", branch: "partner", generation: 2, layout: partnerXy(1, 3220) },
 
   { id: "dr-arshad-khan", name: "Dr. Arshad Khan", branch: "sharif", generation: 3, layout: xy(2, 120) },
-  { id: "jahan-ara", name: "Jahan Ara", branch: "partner", generation: 3 },
+  { id: "jahan-ara", name: "Jahan Ara", branch: "partner", generation: 3, layout: partnerXy(2, 120) },
   { id: "mohammad-ashraf", name: "Mohammad Ashraf", branch: "sharif", generation: 3, layout: xy(2, 230) },
-  { id: "shamim", name: "Shamim", branch: "partner", generation: 3 },
-  { id: "naaz", name: "Naaz", branch: "partner", generation: 3 },
+  { id: "shamim", name: "Shamim", branch: "partner", generation: 3, layout: partnerXy(2, 230) },
+  { id: "naaz", name: "Naaz", branch: "partner", generation: 3, layout: { ...partnerXy(2, 230), partnerLane: 2 } },
   { id: "sadia", name: "Sadia", branch: "sharif", generation: 3, layout: xy(2, 340) },
   { id: "asifa", name: "Asifa", branch: "sharif", generation: 3, layout: xy(2, 450) },
   { id: "shakeela", name: "Shakeela", branch: "sharif", generation: 3, layout: xy(2, 560) },
@@ -169,7 +205,6 @@ const peopleList = [
   { id: "amjad-pervaiz-khan", name: "Amjad Pervaiz Khan", branch: "basheer", generation: 3, born: "5 May 1942", layout: xy(2, 1420) },
   { id: "tahira-ilyas", name: "Tahira Ilyas", branch: "partner", generation: 3, born: "26 February 1946", layout: partnerXy(2, 1420) },
   { id: "tehsin-afza", name: "Tehsin Afza", branch: "basheer", generation: 3, layout: xy(2, 1900) },
-  { id: "mohammad-khalid", name: "Mohammad Khalid", branch: "partner", generation: 3, layout: partnerXy(2, 1900) },
   { id: "azhar-iqbal-khan", name: "Azhar Iqbal Khan", branch: "basheer", generation: 3, layout: xy(2, 2200) },
   { id: "rashida-hameed", name: "Rashida Hameed", branch: "partner", generation: 3, layout: partnerXy(2, 2200) },
   { id: "talat-jameel-sohail", name: "Talat Jameel (Sohail)", branch: "basheer", generation: 3, layout: xy(2, 2630) },
@@ -177,7 +212,7 @@ const peopleList = [
   { id: "anjum", name: "Anjum", branch: "basheer", generation: 3, layout: xy(2, 2910) },
 
   { id: "m-abid-ali", name: "M. Abid Ali", branch: "zakiya", generation: 3, layout: xy(2, 2300) },
-  { id: "m-khalid-zakiya", name: "M. Khalid", branch: "zakiya", generation: 3, layout: xy(2, 2385) },
+  { id: "mohammad-khalid", name: "Mohammad Khalid", branch: "zakiya", generation: 3, layout: xy(2, 2385) },
   { id: "m-jafer", name: "M. Jafer", branch: "zakiya", generation: 3, layout: xy(2, 2470) },
   { id: "fareeda", name: "Fareeda", branch: "zakiya", generation: 3, layout: xy(2, 2555) },
   { id: "naheed-akhter", name: "Naheed Akhter", branch: "zakiya", generation: 3, layout: xy(2, 2640) },
@@ -195,12 +230,12 @@ const peopleList = [
 
   { id: "dr-abdul-rehman", name: "Dr. Abdul Rehman", branch: "basheer", generation: 4, layout: xy(3, 760) },
   { id: "saima-karim", name: "Saima Karim", branch: "basheer", generation: 4, layout: xy(3, 860) },
-  { id: "khawar-aziz", name: "Khawar Aziz", branch: "partner", generation: 4 },
+  { id: "khawar-aziz", name: "Khawar Aziz", branch: "partner", generation: 4, layout: partnerXy(3, 860) },
   { id: "vanees-karim", name: "Vanees Karim", branch: "basheer", generation: 4, layout: xy(3, 960) },
   { id: "sadaf-nazli", name: "Sadaf Nazli", branch: "basheer", generation: 4, layout: xy(3, 1060) },
-  { id: "rehan-ahmed", name: "Rehan Ahmed", branch: "partner", generation: 4 },
+  { id: "rehan-ahmed", name: "Rehan Ahmed", branch: "partner", generation: 4, layout: partnerXy(3, 1060) },
   { id: "nasir-karim", name: "Nasir Karim", branch: "basheer", generation: 4, layout: xy(3, 1160) },
-  { id: "halima-younes", name: "Halima Younes", branch: "partner", generation: 4 },
+  { id: "halima-younes", name: "Halima Younes", branch: "partner", generation: 4, layout: partnerXy(3, 1160) },
 
   { id: "hammad-amjad-khan", name: "Hammad Amjad Khan", branch: "basheer", generation: 4, layout: xy(3, 1300) },
   { id: "farjad-amjad-khan", name: "Farjad Amjad Khan", branch: "basheer", generation: 4, layout: xy(3, 1400) },
@@ -213,37 +248,37 @@ const peopleList = [
 
   { id: "shaila-khan", name: "Shaila Khan", branch: "basheer", generation: 4, layout: xy(3, 1820) },
   { id: "nudrat", name: "Nudrat", branch: "basheer", generation: 4, layout: xy(3, 1920) },
-  { id: "yousef", name: "Yousef", branch: "partner", generation: 4 },
+  { id: "yousef", name: "Yousef", branch: "partner", generation: 4, layout: partnerXy(3, 1920) },
   { id: "imran-khalid", name: "Imran Khalid", branch: "basheer", generation: 4, layout: xy(3, 2020) },
-  { id: "samina", name: "Samina", branch: "partner", generation: 4 },
+  { id: "samina", name: "Samina", branch: "partner", generation: 4, layout: partnerXy(3, 2020) },
   { id: "usman-khalid", name: "Usman Khalid", branch: "basheer", generation: 4, layout: xy(3, 2120) },
-  { id: "sumiera", name: "Sumiera", branch: "partner", generation: 4 },
+  { id: "sumiera", name: "Sumiera", branch: "partner", generation: 4, layout: partnerXy(3, 2120) },
   { id: "nosheen-afza", name: "Nosheen Afza", branch: "basheer", generation: 4, layout: xy(3, 2220) },
-  { id: "jamil", name: "Jamil", branch: "partner", generation: 4 },
+  { id: "jamil", name: "Jamil", branch: "partner", generation: 4, layout: partnerXy(3, 2220) },
 
   { id: "farina-azhar-khan", name: "Farina Azhar Khan", branch: "basheer", generation: 4, layout: xy(3, 2340) },
   { id: "saad-azhar-khan", name: "Saad Azhar Khan", branch: "basheer", generation: 4, layout: xy(3, 2440) },
-  { id: "irum-fatima", name: "Irum Fatima", branch: "partner", generation: 4 },
+  { id: "irum-fatima", name: "Irum Fatima", branch: "partner", generation: 4, layout: partnerXy(3, 2440) },
   { id: "tehmina-azhar-khan", name: "Tehmina Azhar Khan", branch: "basheer", generation: 4, layout: xy(3, 2540) },
-  { id: "shahzad-hashmi", name: "Shahzad Hashmi", branch: "partner", generation: 4 },
+  { id: "shahzad-hashmi", name: "Shahzad Hashmi", branch: "partner", generation: 4, layout: partnerXy(3, 2540) },
   { id: "raziqa-azhar-khan", name: "Raziqa Azhar Khan", branch: "basheer", generation: 4, layout: xy(3, 2640) },
-  { id: "syed-saif-shah", name: "Syed Saif Shah", branch: "partner", generation: 4 },
+  { id: "syed-said-shah", name: "Syed Said Shah", branch: "partner", generation: 4, layout: partnerXy(3, 2640) },
   { id: "jawad-azhar-khan", name: "Jawad Azhar Khan", branch: "basheer", generation: 4, layout: xy(3, 2740) },
-  { id: "nazish-ijaz", name: "Nazish Ijaz", branch: "partner", generation: 4 },
+  { id: "nazish-ijaz", name: "Nazish Ijaz", branch: "partner", generation: 4, layout: partnerXy(3, 2740) },
 
-  { id: "madiha-sohail", name: "Madiha Sohail", branch: "basheer", generation: 4, layout: xy(3, 2860) },
-  { id: "fayaz", name: "Fayaz", branch: "partner", generation: 4 },
+  { id: "madiha-sohail", name: "Madiha Sohail Khan", branch: "basheer", generation: 4, layout: xy(3, 2860) },
+  { id: "fayaz", name: "Fayaz", branch: "partner", generation: 4, layout: partnerXy(3, 2860) },
   { id: "fahad-sohail", name: "Fahad Sohail", branch: "basheer", generation: 4, layout: xy(3, 2960) },
-  { id: "sumbal-sohail", name: "Sumbal Sohail", branch: "basheer", generation: 4, layout: xy(3, 3060) },
-  { id: "inaam", name: "Inaam", branch: "partner", generation: 4 },
-  { id: "zohaib-sohail", name: "Zohaib Sohail", branch: "basheer", generation: 4, layout: xy(3, 3160) },
-  { id: "rubina", name: "Rubina", branch: "partner", generation: 4 },
-  { id: "uzair-sohail", name: "Uzair Sohail", branch: "basheer", generation: 4, layout: xy(3, 3260) },
-  { id: "afza-arif", name: "Afza Arif", branch: "partner", generation: 4 },
+  { id: "sumbal-sohail", name: "Sumbal Sohail Khan", branch: "basheer", generation: 4, layout: xy(3, 3060) },
+  { id: "inaam", name: "Inaam", branch: "partner", generation: 4, layout: partnerXy(3, 3060) },
+  { id: "zohaib-sohail", name: "Zohaib Sohail Khan", branch: "basheer", generation: 4, layout: xy(3, 3160) },
+  { id: "rubina", name: "Rubina", branch: "partner", generation: 4, layout: partnerXy(3, 3160) },
+  { id: "uzair-sohail", name: "Uzair Sohail Khan", branch: "basheer", generation: 4, layout: xy(3, 3260) },
+  { id: "afza-arif", name: "Afza Arif", branch: "partner", generation: 4, layout: partnerXy(3, 3260) },
 
   { id: "abdul-aziz", name: "Abdul Aziz", branch: "basheer", generation: 5, layout: xy(4, 1140) },
   { id: "hafsa-vanees", name: "Hafsa Vanees", branch: "basheer", generation: 5, layout: xy(4, 1240) },
-  { id: "abdul-mueez", name: "Abdul Mueez", branch: "partner", generation: 5 },
+  { id: "abdul-mueez", name: "Abdul Mueez", branch: "partner", generation: 5, layout: partnerXy(4, 1240) },
   { id: "affan", name: "Affan", branch: "basheer", generation: 5, layout: xy(4, 1340) },
   { id: "shahmir", name: "Shahmir", branch: "basheer", generation: 5, layout: xy(4, 1440) },
 
@@ -262,6 +297,27 @@ const peopleList = [
   { id: "azaan", name: "Azaan", branch: "basheer", generation: 5, layout: xy(4, 2500) },
   { id: "inaya", name: "Inaya", branch: "basheer", generation: 5, layout: xy(4, 2600) },
   { id: "hannan", name: "Hannan", branch: "basheer", generation: 5, layout: xy(4, 2700) },
+
+  { id: "aavaiz-noor", name: "Aavaiz Noor", branch: "basheer", generation: 5, layout: xy(4, 2820) },
+  { id: "rijja-noor", name: "Rijja Noor", branch: "basheer", generation: 5, layout: xy(4, 2920) },
+  { id: "fatima-hashmi", name: "Fatima Hashmi", branch: "basheer", generation: 5, layout: xy(4, 3040) },
+  { id: "amjad-bilal-hashmi", name: "Amjad Bilal Hashmi", branch: "basheer", generation: 5, layout: xy(4, 3140) },
+  { id: "nafeesa-hashmi", name: "Nafeesa Hashmi", branch: "basheer", generation: 5, layout: xy(4, 3240) },
+  { id: "ghulam-fatima-hashmi", name: "Ghulam Fatima Hashmi", branch: "basheer", generation: 5, layout: xy(4, 3340) },
+  { id: "mohammad-saim", name: "Mohammad Saim", branch: "basheer", generation: 5, layout: xy(4, 3480) },
+  { id: "mohammad-abdul-rehman-shah", name: "Mohammad Abdul Rehman", branch: "basheer", generation: 5, layout: xy(4, 3580) },
+  { id: "ayesha-noor-jawad", name: "Ayesha Noor", branch: "basheer", generation: 5, layout: xy(4, 3720) },
+  { id: "maria-noor", name: "Maria Noor", branch: "basheer", generation: 5, layout: xy(4, 3820) },
+  { id: "romaisa", name: "Romaisa", branch: "basheer", generation: 5, layout: xy(4, 3920) },
+  { id: "zoha", name: "Zoha", branch: "basheer", generation: 5, layout: xy(4, 4020) },
+  { id: "subhan-madiha", name: "Subhan", branch: "basheer", generation: 5, layout: xy(4, 4160) },
+  { id: "fatima-madiha", name: "Fatima", branch: "basheer", generation: 5, layout: xy(4, 4260) },
+  { id: "khadija-sumbal", name: "Khadija", branch: "basheer", generation: 5, layout: xy(4, 4400) },
+  { id: "anabiya-afraima", name: "Anabiya Afraima", branch: "basheer", generation: 5, layout: xy(4, 4500) },
+  { id: "momin-khan", name: "Momin Khan", branch: "basheer", generation: 5, layout: xy(4, 4640) },
+  { id: "zarwa-khan", name: "Zarwa Khan", branch: "basheer", generation: 5, layout: xy(4, 4780) },
+  { id: "ashar-khan", name: "Ashar Khan", branch: "basheer", generation: 5, layout: xy(4, 4880) },
+  { id: "hamdan-khan", name: "Hamdan Khan", branch: "basheer", generation: 5, layout: xy(4, 4980) },
 ];
 
 const unions = [
@@ -315,6 +371,7 @@ const unions = [
     id: "tehsin-khalid",
     partners: ["tehsin-afza", "mohammad-khalid"],
     children: ["shaila-khan", "nudrat", "imran-khalid", "usman-khalid", "nosheen-afza"],
+    cross: true,
   },
   { id: "nudrat-yousef", partners: ["nudrat", "yousef"], children: [] },
   { id: "imran-samina", partners: ["imran-khalid", "samina"], children: [] },
@@ -325,25 +382,25 @@ const unions = [
     partners: ["azhar-iqbal-khan", "rashida-hameed"],
     children: ["farina-azhar-khan", "saad-azhar-khan", "tehmina-azhar-khan", "raziqa-azhar-khan", "jawad-azhar-khan"],
   },
-  { id: "saad-irum", partners: ["saad-azhar-khan", "irum-fatima"], children: [] },
-  { id: "tehmina-shahzad", partners: ["tehmina-azhar-khan", "shahzad-hashmi"], children: [] },
-  { id: "raziqa-saif", partners: ["raziqa-azhar-khan", "syed-saif-shah"], children: [] },
-  { id: "jawad-nazish", partners: ["jawad-azhar-khan", "nazish-ijaz"], children: [] },
+  { id: "saad-irum", partners: ["saad-azhar-khan", "irum-fatima"], children: ["aavaiz-noor", "rijja-noor"] },
+  { id: "tehmina-shahzad", partners: ["tehmina-azhar-khan", "shahzad-hashmi"], children: ["fatima-hashmi", "amjad-bilal-hashmi", "nafeesa-hashmi", "ghulam-fatima-hashmi"] },
+  { id: "raziqa-said", partners: ["raziqa-azhar-khan", "syed-said-shah"], children: ["mohammad-saim", "mohammad-abdul-rehman-shah"] },
+  { id: "jawad-nazish", partners: ["jawad-azhar-khan", "nazish-ijaz"], children: ["ayesha-noor-jawad", "maria-noor", "romaisa", "zoha"] },
   {
     id: "sohail-tayaba",
     partners: ["talat-jameel-sohail", "tayaba"],
     children: ["madiha-sohail", "fahad-sohail", "sumbal-sohail", "zohaib-sohail", "uzair-sohail"],
   },
-  { id: "madiha-fayaz", partners: ["madiha-sohail", "fayaz"], children: [] },
-  { id: "sumbal-inaam", partners: ["sumbal-sohail", "inaam"], children: [] },
-  { id: "zohaib-rubina", partners: ["zohaib-sohail", "rubina"], children: [] },
-  { id: "uzair-afza", partners: ["uzair-sohail", "afza-arif"], children: [] },
+  { id: "madiha-fayaz", partners: ["madiha-sohail", "fayaz"], children: ["subhan-madiha", "fatima-madiha"] },
+  { id: "sumbal-inaam", partners: ["sumbal-sohail", "inaam"], children: ["khadija-sumbal", "anabiya-afraima"] },
+  { id: "zohaib-rubina", partners: ["zohaib-sohail", "rubina"], children: ["momin-khan"] },
+  { id: "uzair-afza", partners: ["uzair-sohail", "afza-arif"], children: ["zarwa-khan", "ashar-khan", "hamdan-khan"] },
   {
     id: "zakiya-hakim",
     partners: ["zakiya-sultana", "hakim-ali"],
     children: [
       "m-abid-ali",
-      "m-khalid-zakiya",
+      "mohammad-khalid",
       "m-jafer",
       "fareeda",
       "naheed-akhter",
@@ -384,6 +441,8 @@ const state = {
   panX: 0,
   panY: 0,
 };
+let blockNodeClickUntil = 0;
+let renderLayouts = new Map();
 
 const parentUnions = new Map();
 const childUnions = new Map();
@@ -432,7 +491,7 @@ function init() {
   linksEl.setAttribute("viewBox", `0 0 ${WORLD.width} ${WORLD.height}`);
   world.style.width = `${WORLD.width}px`;
   world.style.height = `${WORLD.height}px`;
-  branchFilter.value = "all";
+  branchFilter.value = state.filter;
 
   renderStats();
   renderLineage();
@@ -454,7 +513,11 @@ function bindEvents() {
   document.getElementById("focusMeButton").addEventListener("click", () => {
     branchFilter.value = "all";
     state.filter = "all";
-    selectPerson("nathay-khan", true);
+    state.selectedId = null;
+    hideDetails();
+    renderLineage();
+    renderTree();
+    fitVisible();
   });
 
   document.getElementById("fitButton").addEventListener("click", () => {
@@ -501,35 +564,65 @@ function bindEvents() {
     }
   });
 
-  let dragging = false;
-  let startX = 0;
-  let startY = 0;
-  let panX = 0;
-  let panY = 0;
+  const activePointers = new Map();
+  let gesture = null;
+  let tapCandidateId = null;
+  let movedDuringGesture = false;
 
   viewport.addEventListener("pointerdown", (event) => {
-    if (event.target.closest("button, input, select")) return;
-    dragging = true;
-    startX = event.clientX;
-    startY = event.clientY;
-    panX = state.panX;
-    panY = state.panY;
+    event.preventDefault();
+    if (!activePointers.size) {
+      tapCandidateId = event.target.closest(".person-node")?.dataset.id || null;
+      movedDuringGesture = false;
+    } else {
+      tapCandidateId = null;
+      movedDuringGesture = true;
+    }
+
+    activePointers.set(event.pointerId, pointFromEvent(event));
     viewport.classList.add("is-dragging");
-    viewport.setPointerCapture(event.pointerId);
+    try {
+      viewport.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic tests and some interrupted touch gestures may not allow capture.
+    }
+    startGesture();
   });
 
   viewport.addEventListener("pointermove", (event) => {
-    if (!dragging) return;
-    state.panX = panX + event.clientX - startX;
-    state.panY = panY + event.clientY - startY;
-    applyTransform();
+    if (!activePointers.has(event.pointerId)) return;
+    event.preventDefault();
+    activePointers.set(event.pointerId, pointFromEvent(event));
+
+    if (activePointers.size >= 2 && gesture?.mode === "pinch") {
+      const [first, second] = getPointerPair();
+      const mid = midpoint(first, second);
+      const distanceNow = Math.max(12, distanceBetween(first, second));
+      state.zoom = clamp(gesture.zoom * (distanceNow / gesture.distance), MIN_ZOOM, 1.35);
+      state.panX = mid.x - gesture.worldMid.x * state.zoom;
+      state.panY = mid.y - gesture.worldMid.y * state.zoom;
+      movedDuringGesture = true;
+      blockNodeClickUntil = Date.now() + 350;
+      applyTransform();
+      return;
+    }
+
+    if (activePointers.size === 1 && gesture?.mode === "drag") {
+      const point = [...activePointers.values()][0];
+      const dx = point.x - gesture.start.x;
+      const dy = point.y - gesture.start.y;
+      if (Math.hypot(dx, dy) > 6) {
+        movedDuringGesture = true;
+        blockNodeClickUntil = Date.now() + 350;
+      }
+      state.panX = gesture.panX + dx;
+      state.panY = gesture.panY + dy;
+      applyTransform();
+    }
   });
 
-  viewport.addEventListener("pointerup", (event) => {
-    dragging = false;
-    viewport.classList.remove("is-dragging");
-    viewport.releasePointerCapture(event.pointerId);
-  });
+  viewport.addEventListener("pointerup", endPointer);
+  viewport.addEventListener("pointercancel", endPointer);
 
   viewport.addEventListener(
     "wheel",
@@ -548,15 +641,218 @@ function bindEvents() {
   );
 
   window.addEventListener("resize", () => {
-    applyTransform();
+    renderTree();
+    fitVisible();
     resizeWaterCanvas();
   });
+
+  function startGesture() {
+    if (activePointers.size >= 2) {
+      const [first, second] = getPointerPair();
+      const mid = midpoint(first, second);
+      const rect = viewport.getBoundingClientRect();
+      gesture = {
+        mode: "pinch",
+        distance: Math.max(12, distanceBetween(first, second)),
+        zoom: state.zoom,
+        worldMid: {
+          x: (mid.x - rect.left - state.panX) / state.zoom,
+          y: (mid.y - rect.top - state.panY) / state.zoom,
+        },
+      };
+      blockNodeClickUntil = Date.now() + 350;
+      return;
+    }
+
+    const point = [...activePointers.values()][0];
+    gesture = {
+      mode: "drag",
+      start: point,
+      panX: state.panX,
+      panY: state.panY,
+    };
+  }
+
+  function endPointer(event) {
+    const shouldTap = activePointers.size === 1 && activePointers.has(event.pointerId) && !movedDuringGesture && tapCandidateId;
+    activePointers.delete(event.pointerId);
+    try {
+      viewport.releasePointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture may already be gone after a system-level gesture cancel.
+    }
+
+    if (!activePointers.size) {
+      gesture = null;
+      viewport.classList.remove("is-dragging");
+      if (shouldTap) {
+        blockNodeClickUntil = Date.now() + 350;
+        selectPerson(tapCandidateId, true);
+      }
+      tapCandidateId = null;
+      return;
+    }
+
+    startGesture();
+  }
+
+  function pointFromEvent(event) {
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  function getPointerPair() {
+    return [...activePointers.values()].slice(0, 2);
+  }
+
+  function midpoint(first, second) {
+    return {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    };
+  }
+
+  function distanceBetween(first, second) {
+    return Math.hypot(first.x - second.x, first.y - second.y);
+  }
 }
 
 function renderTree() {
+  updateRenderLayout();
   renderLinks();
   renderNodes();
   updateSelectedPill();
+}
+
+function updateRenderLayout() {
+  const active = visiblePeople.filter((person) => passesFilter(person.id));
+  renderLayouts = new Map();
+
+  if (!active.length) {
+    syncWorldSize(WORLD.width, WORLD.height);
+    return;
+  }
+
+  const rows = new Map();
+  for (const person of active) {
+    const row = person.layout.seedGeneration ?? Math.max(0, person.generation - 1);
+    const rowItems = rows.get(row) || [];
+    rowItems.push(person);
+    rows.set(row, rowItems);
+  }
+
+  const slot = NODE.width + COMPACT_LAYOUT.slotGap;
+  const orderById = new Map();
+  const rowPlans = [];
+  const sortedRows = [...rows.keys()].sort((a, b) => a - b);
+
+  for (const row of sortedRows) {
+    const items = rows.get(row).sort((a, b) => {
+      const memo = new Map();
+      return (
+        rowSortKey(a, row, orderById, memo) - rowSortKey(b, row, orderById, memo) ||
+        a.layout.x - b.layout.x ||
+        (a.layout.partnerLane || 0) - (b.layout.partnerLane || 0) ||
+        a.name.localeCompare(b.name)
+      );
+    });
+    const width = Math.max(NODE.width, (items.length - 1) * slot + NODE.width);
+    rowPlans.push({ items, width });
+    items.forEach((person, index) => orderById.set(person.id, index));
+  }
+
+  const widest = Math.max(...rowPlans.map((row) => row.width), NODE.width);
+  const width = Math.ceil(widest + COMPACT_LAYOUT.sideMargin * 2);
+  let y = COMPACT_LAYOUT.top;
+
+  for (const plan of rowPlans) {
+    const startX = (width - plan.width) / 2;
+    plan.items.forEach((person, index) => {
+      renderLayouts.set(person.id, {
+        x: Math.round(startX + index * slot),
+        y: Math.round(y),
+      });
+    });
+    y += COMPACT_LAYOUT.rowGap;
+  }
+
+  syncWorldSize(width, Math.ceil(y - COMPACT_LAYOUT.rowGap + NODE.height + COMPACT_LAYOUT.bottom));
+}
+
+function rowSortKey(person, row, orderById, memo, visiting = new Set()) {
+  if (memo.has(person.id)) return memo.get(person.id);
+  if (visiting.has(person.id)) return person.layout.x;
+  visiting.add(person.id);
+
+  let key = null;
+
+  for (const union of partnerUnions.get(person.id) || []) {
+    if (!union.children.length) continue;
+    const anchorId = getUnionAnchorParent(union);
+    if (!anchorId || anchorId === person.id) continue;
+    const anchor = people.get(anchorId);
+    if (!anchor?.layout) continue;
+    const anchorRow = anchor.layout.seedGeneration ?? Math.max(0, anchor.generation - 1);
+    if (anchorRow !== row) continue;
+    const anchorKey = rowSortKey(anchor, row, orderById, memo, visiting);
+    key = anchorKey + 0.35 + (person.layout.partnerLane || 1) * 0.08;
+    break;
+  }
+
+  const birthUnion = (childUnions.get(person.id) || [])[0];
+  if (key === null && birthUnion) {
+    const anchorId = getUnionAnchorParent(birthUnion);
+    const parentOrder = orderById.get(anchorId);
+    if (parentOrder !== undefined) {
+      key = parentOrder * 1000 + Math.max(0, birthUnion.children.indexOf(person.id)) * 12;
+    }
+  }
+
+  if (key === null) {
+    for (const union of partnerUnions.get(person.id) || []) {
+      const sameRowPartnerId = union.partners.find((partnerId) => {
+        if (partnerId === person.id) return false;
+        const partner = people.get(partnerId);
+        return partner?.layout && (partner.layout.seedGeneration ?? Math.max(0, partner.generation - 1)) === row;
+      });
+      const partnerBirthUnion = sameRowPartnerId ? (childUnions.get(sameRowPartnerId) || [])[0] : null;
+      if (!partnerBirthUnion) continue;
+      const anchorId = getUnionAnchorParent(partnerBirthUnion);
+      const parentOrder = orderById.get(anchorId);
+      if (parentOrder === undefined) continue;
+      key =
+        parentOrder * 1000 +
+        Math.max(0, partnerBirthUnion.children.indexOf(sameRowPartnerId)) * 12 +
+        0.35 +
+        (person.layout.partnerLane || 1) * 0.08;
+      break;
+    }
+  }
+
+  if (key === null) key = person.layout.x;
+  memo.set(person.id, key);
+  visiting.delete(person.id);
+  return key;
+}
+
+function getUnionAnchorParent(union) {
+  if (union.partners.length <= 1 || !union.children.length) return union.partners[0];
+
+  const childLineCounts = new Map();
+  for (const childId of union.children) {
+    const label = getFamilyLineLabel(childId);
+    childLineCounts.set(label, (childLineCounts.get(label) || 0) + 1);
+  }
+
+  const dominantLine = [...childLineCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  return union.partners.find((partnerId) => getFamilyLineLabel(partnerId) === dominantLine) || union.partners[0];
+}
+
+function syncWorldSize(width, height) {
+  WORLD.width = Math.max(Math.ceil(width), NODE.width + COMPACT_LAYOUT.sideMargin * 2);
+  WORLD.height = Math.max(Math.ceil(height), NODE.height + COMPACT_LAYOUT.top + COMPACT_LAYOUT.bottom);
+  linksEl.setAttribute("viewBox", `0 0 ${WORLD.width} ${WORLD.height}`);
+  world.style.width = `${WORLD.width}px`;
+  world.style.height = `${WORLD.height}px`;
 }
 
 function renderNodes() {
@@ -564,6 +860,7 @@ function renderNodes() {
   const html = visiblePeople
     .map((person) => {
       const hidden = !passesFilter(person.id);
+      const layout = getRenderLayout(person.id);
       const spouses = getSpouses(person.id).map((item) => item.name || item.label).filter(Boolean);
       const familyLine = getFamilyLineLabel(person.id);
       const classes = [
@@ -578,7 +875,7 @@ function renderNodes() {
         .join(" ");
 
       return `
-        <button class="${classes}" type="button" data-id="${person.id}" style="left:${person.layout.x}px;top:${person.layout.y}px">
+        <button class="${classes}" type="button" data-id="${person.id}" style="left:${layout.x}px;top:${layout.y}px">
           <span class="node-name">${escapeHtml(person.name)}</span>
           <span class="node-branch">${escapeHtml(familyLine)}</span>
           ${person.born ? `<span class="node-birth">Born ${escapeHtml(person.born)}</span>` : ""}
@@ -590,7 +887,15 @@ function renderNodes() {
 
   nodesEl.innerHTML = html;
   nodesEl.querySelectorAll(".person-node").forEach((node) => {
-    node.addEventListener("click", () => selectPerson(node.dataset.id, true));
+    node.addEventListener("click", (event) => {
+      if (Date.now() < blockNodeClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      selectPerson(node.dataset.id, true);
+    });
   });
 }
 
@@ -600,16 +905,17 @@ function renderLinks() {
   for (const union of unions) {
     const visiblePartners = union.partners.filter((id) => people.get(id)?.layout && passesFilter(id));
     const cross = union.cross ? " cross" : "";
-    const direct = union.partners.some((id) => activeLineage.has(id)) ? " direct" : "";
+      const marriageDirect = state.selectedId && union.partners.includes(state.selectedId) ? " direct" : "";
 
     if (visiblePartners.length >= 2) {
       const [first, second] = visiblePartners;
-      paths.push(pathElement(spousePath(centerOf(first), centerOf(second)), `link marriage${cross}${direct}`));
+      paths.push(pathElement(spousePath(centerOf(first), centerOf(second)), `link marriage${cross}${marriageDirect}`));
     }
 
     if (!union.children.length || !visiblePartners.length) continue;
 
-    const start = unionCenter(visiblePartners);
+    const anchorId = getUnionAnchorParent(union);
+    const start = visiblePartners.includes(anchorId) ? centerOf(anchorId) : unionCenter(visiblePartners);
     for (const childId of union.children) {
       const child = people.get(childId);
       if (!child?.layout || !passesFilter(childId)) continue;
@@ -632,6 +938,8 @@ function applyTopDownLayout(records) {
 
   for (const person of records) {
     if (!person.layout) continue;
+    const override = layoutOverrides[person.id];
+    if (override) person.layout = { ...person.layout, ...override };
     const row = person.layout.seedGeneration ?? Math.max(0, person.generation - 1);
     const rowItems = rows.get(row) || [];
     rowItems.push(person);
@@ -702,11 +1010,15 @@ function spousePath(start, end) {
 }
 
 function centerOf(id) {
-  const person = people.get(id);
+  const layout = getRenderLayout(id);
   return {
-    x: person.layout.x + NODE.width / 2,
-    y: person.layout.y + NODE.height / 2,
+    x: layout.x + NODE.width / 2,
+    y: layout.y + NODE.height / 2,
   };
+}
+
+function getRenderLayout(id) {
+  return renderLayouts.get(id) || people.get(id)?.layout || { x: 0, y: 0 };
 }
 
 function unionCenter(partnerIds) {
@@ -941,12 +1253,13 @@ function renderSearch() {
 
 function selectPerson(id, shouldCenterNode) {
   const anchorId = nearestAnyAnchor(id);
-  if (shouldCenterNode && anchorId && !passesFilter(anchorId)) {
+  state.selectedId = id;
+
+  if (shouldCenterNode && anchorId && state.filter !== "explorer" && !passesFilter(anchorId)) {
     state.filter = "all";
     branchFilter.value = "all";
   }
 
-  state.selectedId = id;
   renderLineage();
   renderTree();
   renderDetails(id);
@@ -959,19 +1272,54 @@ function selectPerson(id, shouldCenterNode) {
 
 function updateSelectedPill() {
   const person = people.get(state.selectedId);
-  selectedPill.textContent = person ? person.name : "Full family";
+  selectedPill.textContent = person ? person.name : state.filter === "explorer" ? "Branch explorer" : "Full family";
 }
 
 function passesFilter(id) {
   const person = people.get(id);
   if (!person?.layout) return false;
 
+  if (state.filter === "explorer") return getExplorerSet().has(id);
   if (state.filter === "all") return true;
   if (state.filter === "direct") return getActiveLineageSet().has(id);
   if (state.filter === "connected") return crossMarriageSet.has(id);
 
   if (person.branch === state.filter) return true;
   return isPartnerOfBranch(id, state.filter);
+}
+
+function getExplorerSet() {
+  if (!state.selectedId) return getRootExplorerSet();
+
+  const ids = new Set([
+    state.selectedId,
+    ...getAncestors(state.selectedId),
+    ...getParents(state.selectedId),
+    ...getSiblings(state.selectedId),
+    ...getSpouses(state.selectedId).filter((item) => item.id).map((item) => item.id),
+    ...getChildren(state.selectedId),
+  ]);
+
+  addVisibleSpouses(ids, [...ids]);
+  for (const childId of getChildren(state.selectedId)) {
+    addVisibleSpouses(ids, [childId]);
+  }
+
+  return ids;
+}
+
+function getRootExplorerSet() {
+  const ids = new Set(["nathay-khan", "wazeer-begum", ...getChildren("nathay-khan")]);
+  addVisibleSpouses(ids, [...ids]);
+  return ids;
+}
+
+function addVisibleSpouses(target, sourceIds) {
+  for (const id of sourceIds) {
+    for (const spouse of getSpouses(id)) {
+      if (spouse.id && people.get(spouse.id)?.layout) target.add(spouse.id);
+    }
+  }
 }
 
 function shouldMute(id) {
@@ -1100,13 +1448,14 @@ function unique(items) {
 function centerOn(id, zoom = state.zoom) {
   const person = people.get(id);
   if (!person?.layout) return;
+  const layout = getRenderLayout(id);
 
   state.zoom = clamp(zoom, MIN_ZOOM, 1.35);
   const rect = viewport.getBoundingClientRect();
   const targetX = rect.width / 2;
   const targetY = window.innerWidth <= 760 ? rect.height * 0.26 : rect.height / 2;
-  state.panX = targetX - (person.layout.x + NODE.width / 2) * state.zoom;
-  state.panY = targetY - (person.layout.y + NODE.height / 2) * state.zoom;
+  state.panX = targetX - (layout.x + NODE.width / 2) * state.zoom;
+  state.panY = targetY - (layout.y + NODE.height / 2) * state.zoom;
   applyTransform();
 }
 
@@ -1116,10 +1465,11 @@ function fitVisible() {
 
   const bounds = active.reduce(
     (box, person) => {
-      box.minX = Math.min(box.minX, person.layout.x);
-      box.minY = Math.min(box.minY, person.layout.y);
-      box.maxX = Math.max(box.maxX, person.layout.x + NODE.width);
-      box.maxY = Math.max(box.maxY, person.layout.y + NODE.height);
+      const layout = getRenderLayout(person.id);
+      box.minX = Math.min(box.minX, layout.x);
+      box.minY = Math.min(box.minY, layout.y);
+      box.maxX = Math.max(box.maxX, layout.x + NODE.width);
+      box.maxY = Math.max(box.maxY, layout.y + NODE.height);
       return box;
     },
     { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity },
@@ -1130,6 +1480,7 @@ function fitVisible() {
   const zoomX = rect.width / (bounds.maxX - bounds.minX + padding * 2);
   const zoomY = rect.height / (bounds.maxY - bounds.minY + padding * 2);
   const fitZoom = Math.min(zoomX, zoomY);
+
   const wideTree = active.length > 32;
   const heightFitZoom = window.innerWidth <= 760 ? clamp(zoomY * 0.9, 0.26, 0.4) : clamp(zoomY * 0.9, 0.28, 0.48);
   state.zoom = wideTree ? heightFitZoom : clamp(fitZoom, MIN_ZOOM, 0.78);
